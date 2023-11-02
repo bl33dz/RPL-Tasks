@@ -1,0 +1,79 @@
+@startuml
+!theme plain
+!define primary_key(x) <b><color:#b8861b><&key></color> x</b>
+!define foreign_key(x) <color:#aaaaaa><&key></color> x
+!define column(x) <color:#efefef><&media-record></color> x
+!define table(x) class x
+
+skinparam linetype ortho
+hide empty methods
+
+class Users {
+  primary_key( UserID ): INTEGER <<generated>>
+  column( Fullname ): VARCHAR(100)
+  column( Username ): VARCHAR(50)
+  column( Email ): VARCHAR(100)
+  column( PhoneNumber ): VARCHAR(15)
+  column( Password ): VARCHAR(100)
+  column( CreatedAt ): DATE
+}
+
+class AirlineTypes {
+  primary_key( AirlineTypeID ): INTEGER <<generated>>
+  column( TypeName ): VARCHAR(100)
+}
+
+class HotelTypes {
+  primary_key( HotelTypeID ): INTEGER <<generated>>
+  column( TypeName ): VARCHAR(100)
+}
+
+class Cities {
+  primary_key( CityID ): INTEGER <<generated>>
+  column( CityName ): VARCHAR(100)
+}
+
+class Flights {
+  primary_key( FlightID ): INTEGER <<generated>>
+  foreign_key( AirlineTypeID ): INTEGER <<FK>>
+  foreign_key( DepartureCityID ): INTEGER <<FK>>
+  foreign_key( ArrivalCityID ): INTEGER <<FK>>
+  column( DepartureTime ): DATETIME
+  column( ArrivalTime ): DATETIME
+}
+
+class FlightBookings {
+  primary_key( BookingID ): INTEGER <<generated>>
+  foreign_key( UserID ): INTEGER <<FK>>
+  foreign_key( FlightID ): INTEGER <<FK>>
+  column( Price ): INTEGER
+  column( BookingDate ): DATE
+}
+
+class Hotels {
+  primary_key( HotelID ): INTEGER <<generated>>
+  column( HotelName ): VARCHAR(100)
+  column( HotelAddress ): VARCHAR(200)
+  foreign_key( CityID ): INTEGER <<FK>>
+  foreign_key( HotelTypeID ): INTEGER <<FK>>
+}
+
+class HotelBookings {
+  primary_key( BookingID ): INTEGER <<generated>>
+  foreign_key( UserID ): INTEGER <<FK>>
+  foreign_key( HotelID ): INTEGER <<FK>>
+  column( Price ): INTEGER
+  column( BookingDate ): DATE
+  column( CheckInDate ): DATE
+  column( CheckOutDate ): DATE
+}
+
+Users --|{ FlightBookings
+Users --|{ HotelBookings
+AirlineTypes --o{ Flights
+HotelTypes --o{ Hotels
+Cities --o{ Flights
+Cities --o{ Hotels
+Flights --|{ FlightBookings
+Hotels --|{ HotelBookings
+@enduml
